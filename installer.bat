@@ -101,7 +101,7 @@ ECHO #############################
 ECHO Creating Nginx service
 ECHO #############################
 ECHO.
-ECHO In order to save and reload Nginx configuration, you need to run the NGINX service as the currently logged in user
+ECHO In order to save and reload Nginx configuration, you need to run the NGINX service as the administrator
 ECHO.
 ECHO Username: %username%
 set "psCommand=powershell -Command "$pword = read-host 'Enter Password' -AsSecureString ; ^
