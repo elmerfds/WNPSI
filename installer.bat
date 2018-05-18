@@ -1,5 +1,5 @@
 @ECHO off
-SET wnpsi_v=v1.0.0
+SET wnpsi_v=v1.5.0
 TITLE Windows Nginx PHP Stack Installer %wnpsi_v%
 COLOR 03
 ECHO      ___           ___           ___         ___                 
@@ -21,7 +21,7 @@ SET nginx_v=1.12.2
 SET php_v=7.2.4
 SET nssm_v=2.24-101
 SET vcr_v=2017
-CD %~dp0
+CD /d %~dp0
 
 ECHO Where do you want to install Nginx? 
 ECHO - Press enter to use default and recommended directory: c:\nginx
@@ -64,14 +64,15 @@ ECHO.
 ECHO Moving Nginx and PHP to destination
 ECHO.
 MOVE %~dp0nginx-* nginx
-MOVE %~dp0nginx %nginx_loc%
+MOVE %~dp0nginx\html %~dp0nginx\www
+ROBOCOPY %~dp0nginx %nginx_loc% /E /MOVE /NFL /NDL /NJH /nc /ns /np
 MOVE %~dp0nssm-* nssm
-MOVE %~dp0php %nginx_loc%\php
+ROBOCOPY %~dp0php %nginx_loc%\php /E /MOVE /NFL /NDL /NJH /nc /ns /np
 
 ECHO.
 ECHO Moving NSSM to destination
 ECHO.
-MOVE %~dp0nssm\win64\nssm.exe C:\Windows\System32
+ROBOCOPY %~dp0nssm\win64\ C:\Windows\System32 /E /MOVE /NFL /NDL /NJH /nc /ns /np /R:0 /W:1
 
 
 ECHO.
@@ -103,6 +104,11 @@ ECHO.
 NSSM install PHP %nginx_loc%\php\php-cgi.exe
 NSSM set PHP AppParameters -b 127.0.0.1:9000
 NSSM set PHP ObjectName %userdomain%\%username% %pass%
+ECHO.
+ECHO Setting PHP system variables
+SETX /m PHP_FCGI_CHILDREN 3
+SETX /m PHP_FCGI_MAX_REQUESTS 128
+ECHO.
 NSSM start PHP
 NSSM restart PHP
 
@@ -112,11 +118,10 @@ ECHO Updating Nginx and PHP config
 ECHO #############################
 ECHO.
 COPY %~dp0config\nginx.conf %nginx_loc%\conf\nginx.conf
-CD %nginx_loc%
 nginx -s reload
 CD %~dp0
 COPY %~dp0config\php.ini %nginx_loc%\php\php.ini
-COPY %~dp0config\index.php %nginx_loc%\html\index.php
+COPY %~dp0config\index.php %nginx_loc%\www\index.php
 CD %nginx_loc%
 nginx -s reload
 CD %~dp0
