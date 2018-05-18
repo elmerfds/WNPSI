@@ -1,5 +1,5 @@
 @ECHO off
-SET wnpsi_v=v1.5.1
+SET wnpsi_v=v1.5.2
 TITLE Windows Nginx PHP Stack Installer %wnpsi_v%
 COLOR 03
 ECHO      ___           ___           ___         ___                 
@@ -51,6 +51,9 @@ cscript dl_config\4_vcr.vbs //Nologo
 ECHO.    Done!
 
 ECHO.
+ECHO Download Completed...
+
+ECHO.
 ECHO #############################
 ECHO Unzipping Files
 ECHO #############################
@@ -70,13 +73,18 @@ ECHO.    Done!
 
 ECHO.
 ECHO ####################################
-ECHO Moving Nginx and PHP to destination
+ECHO Moving Nginx to destination
 ECHO ####################################
 ECHO.
-MOVE %~dp0nginx-* nginx
-MOVE %~dp0nginx\html %~dp0nginx\www
+MOVE %~dp0nginx-* nginx >nul 2>&1
+MOVE %~dp0nginx\html %~dp0nginx\www >nul 2>&1
 ROBOCOPY %~dp0nginx %nginx_loc% /E /MOVE /NFL /NDL /NJH /nc /ns /np
-MOVE %~dp0nssm-* nssm
+
+ECHO.
+ECHO ####################################
+ECHO Moving PHP to destination
+ECHO ####################################
+ECHO.
 ROBOCOPY %~dp0php %nginx_loc%\php /E /MOVE /NFL /NDL /NJH /nc /ns /np
 
 ECHO.
@@ -84,11 +92,9 @@ ECHO #############################
 ECHO Moving NSSM to destination
 ECHO #############################
 ECHO.
+MOVE %~dp0nssm-* nssm >nul 2>&1
 ROBOCOPY %~dp0nssm\win64\ C:\Windows\System32 /E /MOVE /NFL /NDL /NJH /nc /ns /np /R:0 /W:1
 
-
-ECHO.
-ECHO Download Completed...
 
 ECHO.
 ECHO #############################
