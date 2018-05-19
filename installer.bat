@@ -30,7 +30,7 @@ IF "%nginx_loc%" == "" (
   set nginx_loc=c:\nginx
 )
 ECHO.
-ECHO #############################
+ECHO ############################
 ECHO Downloading Requirements
 ECHO ############################
 ECHO.
@@ -140,13 +140,14 @@ ECHO Updating Nginx and PHP config
 ECHO #############################
 ECHO.
 COPY %~dp0config\nginx.conf %nginx_loc%\conf\nginx.conf
+CD /d %nginx_loc%
 nginx -s reload
-CD %~dp0
+CD /d %~dp0
 COPY %~dp0config\php.ini %nginx_loc%\php\php.ini
 COPY %~dp0config\index.php %nginx_loc%\www\index.php
-CD %nginx_loc%
+CD /d %nginx_loc%
 nginx -s reload
-CD %~dp0
+CD /d %~dp0
 NSSM restart PHP
 NSSM restart NGINX
 ECHO.
